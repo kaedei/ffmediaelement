@@ -23,7 +23,7 @@ namespace Unosquare.FFME.Rendering
         /// <summary>
         /// The default font size.
         /// </summary>
-        private const double DefaultFontSize = 56;
+        private const double DefaultFontSize = 40;
 
         /// <summary>
         /// The default text foreground.
@@ -96,12 +96,7 @@ namespace Unosquare.FFME.Rendering
         /// <summary>
         /// Holds the text blocks that together create an outlined subtitle text display.
         /// </summary>
-        private readonly Dictionary<Block, TextBlock> TextBlocks = new Dictionary<Block, TextBlock>(5);
-
-        /// <summary>
-        /// The container for the outlined text blocks.
-        /// </summary>
-        private readonly Viewbox Container = new Viewbox { Name = nameof(Container) };
+        private readonly Dictionary<Block, OutlinedTextBlock> TextBlocks = new Dictionary<Block, OutlinedTextBlock>(5);
 
         /// <summary>
         /// A Layout transform to condense text.
@@ -120,50 +115,31 @@ namespace Unosquare.FFME.Rendering
                 Name = $"{nameof(SubtitlesControl)}TextGrid"
             };
 
-            Container.Child = layoutElement;
-
-            for (var i = (int)Block.Bottom; i >= (int)Block.Foreground; i--)
+            var textBlock = new OutlinedTextBlock()
             {
-                var textBlock = new TextBlock
-                {
-                    Name = $"{nameof(SubtitlesControl)}_{(Block)i}",
-                    TextWrapping = TextWrapping.NoWrap,
-                    TextAlignment = TextAlignment.Center,
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    VerticalAlignment = VerticalAlignment.Stretch,
-                    LayoutTransform = CondenseTransform
-                };
+                Name = $"{nameof(SubtitlesControl)}_{Block.Foreground}",
+                TextWrapping = TextWrapping.NoWrap,
+                TextAlignment = TextAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                LayoutTransform = CondenseTransform,
+                CacheMode = new BitmapCache(),
+                Stroke = DefaultTextOutline,
+                Fill = DefaultTextForeground,
+                FontSize = DefaultFontSize,
+                FontWeight = FontWeights.DemiBold,
+                StrokeThickness = DefaultTextOutlineWidth.Left,
+                StrokePosition = StrokePosition.Outside,
+                Effect = GetDefaultTextForegroundEffect(),
+                Margin = new Thickness(0)
+            };
 
-                TextBlocks[(Block)i] = textBlock;
+            TextBlocks[Block.Foreground] = textBlock;
 
-                var blockType = (Block)i;
-                if (blockType == Block.Foreground)
-                {
-                    textBlock.Effect = GetDefaultTextForegroundEffect();
-                    textBlock.Foreground = DefaultTextForeground;
-                    textBlock.Margin = new Thickness(0);
-                }
-                else
-                {
-                    textBlock.Foreground = DefaultTextOutline;
-                    textBlock.Margin = ComputeMargin(blockType, DefaultTextOutlineWidth);
-                }
+            layoutElement.Children.Add(textBlock);
 
-                layoutElement.Children.Add(textBlock);
-            }
-
-            // Add the container as the content of the control.
-            Container.Stretch = Stretch.Uniform;
-            Container.StretchDirection = StretchDirection.DownOnly;
-            Container.VerticalAlignment = VerticalAlignment.Stretch;
-            Container.HorizontalAlignment = HorizontalAlignment.Stretch;
-            Content = Container;
+            Content = layoutElement;
             Height = 0;
-
-            // set font defaults
-            FontSize = DefaultFontSize;
-            FontWeight = FontWeights.DemiBold;
-            VerticalAlignment = VerticalAlignment.Bottom;
 
             if (Library.IsInDesignMode)
             {
@@ -297,40 +273,41 @@ namespace Unosquare.FFME.Rendering
         /// <returns>A new instance of a foreground effect.</returns>
         private static Effect GetDefaultTextForegroundEffect() => new DropShadowEffect
         {
-            BlurRadius = 4,
+            BlurRadius = 5,
             Color = Colors.Black,
-            Direction = 315,
+            Direction = 0,
             Opacity = 0.75,
             RenderingBias = RenderingBias.Performance,
-            ShadowDepth = 6
+            ShadowDepth = 0
         };
 
         #endregion
 
         #region Dependency Property Change Handlers
 
-        private static void OnTextPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        private static void OnTextPropertyChanged(DependencyObject dependencyObject,
+            DependencyPropertyChangedEventArgs e)
         {
             if (dependencyObject is SubtitlesControl == false) return;
 
             var element = (SubtitlesControl)dependencyObject;
             var value = e.NewValue as string;
-            if (string.IsNullOrWhiteSpace(value)) value = " \r\n ";
-            if (value.ContainsOrdinal("\n") == false) value = $"{value}\r\n ";
             foreach (var t in element.TextBlocks)
                 t.Value.Text = value;
         }
 
-        private static void OnTextForegroundPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        private static void OnTextForegroundPropertyChanged(DependencyObject dependencyObject,
+            DependencyPropertyChangedEventArgs e)
         {
             if (dependencyObject is SubtitlesControl == false) return;
 
             var element = (SubtitlesControl)dependencyObject;
             var value = e.NewValue as Brush;
-            element.TextBlocks[Block.Foreground].Foreground = value;
+            element.TextBlocks[Block.Foreground].Fill = value;
         }
 
-        private static void OnTextOutlinePropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        private static void OnTextOutlinePropertyChanged(DependencyObject dependencyObject,
+            DependencyPropertyChangedEventArgs e)
         {
             if (dependencyObject is SubtitlesControl == false) return;
 
@@ -338,22 +315,23 @@ namespace Unosquare.FFME.Rendering
             var value = e.NewValue as Brush;
             foreach (var t in element.TextBlocks)
             {
-                if (t.Key != Block.Foreground)
-                    t.Value.Foreground = value;
+                t.Value.Stroke = value;
             }
         }
 
-        private static void OnTextOutlineWidthPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        private static void OnTextOutlineWidthPropertyChanged(DependencyObject dependencyObject,
+            DependencyPropertyChangedEventArgs e)
         {
             if (dependencyObject is SubtitlesControl == false) return;
 
             var element = (SubtitlesControl)dependencyObject;
             var value = (Thickness)e.NewValue;
             foreach (var t in element.TextBlocks)
-                t.Value.Margin = ComputeMargin(t.Key, value);
+                t.Value.StrokeThickness = value.Left;
         }
 
-        private static void OnTextForegroundEffectPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        private static void OnTextForegroundEffectPropertyChanged(DependencyObject dependencyObject,
+            DependencyPropertyChangedEventArgs e)
         {
             if (dependencyObject is SubtitlesControl == false) return;
 

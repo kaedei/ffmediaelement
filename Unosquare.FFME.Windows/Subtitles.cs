@@ -22,6 +22,12 @@
             "Foreground", typeof(Brush), typeof(Subtitles));
 
         /// <summary>
+        /// The text margin property.
+        /// </summary>
+        public static readonly DependencyProperty MarginProperty = DependencyProperty.RegisterAttached(
+            "Margin", typeof(Thickness), typeof(Subtitles));
+
+        /// <summary>
         /// The text foreground effect dependency property.
         /// </summary>
         public static readonly DependencyProperty EffectProperty = DependencyProperty.RegisterAttached(
@@ -176,5 +182,12 @@
         /// <param name="element">The object.</param>
         /// <param name="value">The value.</param>
         public static void SetOutlineBrush(MediaElement element, Brush value) => element?.SetValue(OutlineBrushProperty, value);
+
+        /// <summary>
+        /// Sets the margin.
+        /// </summary>
+        /// <param name="element">The object.</param>
+        /// <param name="value">The value.</param>
+        public static void SetMargin(MediaElement element, Thickness value) => element?.SetValue(MarginProperty, value);
     }
 }

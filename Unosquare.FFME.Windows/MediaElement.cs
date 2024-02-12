@@ -293,23 +293,25 @@ namespace Unosquare.FFME
             ContentGrid.IsHitTestVisible = false;
 
             // Setup the Subtitle View
-            SubtitlesView.FontSize = 98;
+            SubtitlesView.FontSize = 40;
             SubtitlesView.Padding = new Thickness(0);
-            SubtitlesView.FontFamily = new FontFamily("Microsoft Sans Serif, Lucida Console, Calibri");
+            SubtitlesView.Margin = new Thickness(8, 0, 8, 30);
+            SubtitlesView.FontFamily = new FontFamily("Microsoft YaHei UI");
             SubtitlesView.FontStretch = FontStretches.Condensed;
             SubtitlesView.FontWeight = FontWeights.Bold;
-            SubtitlesView.TextOutlineWidth = new Thickness(4);
-            SubtitlesView.TextForeground = Brushes.LightYellow;
+            SubtitlesView.TextOutlineWidth = new Thickness(2);
+            SubtitlesView.TextForeground = Brushes.White;
             SubtitlesView.UseLayoutRounding = true;
             SubtitlesView.SnapsToDevicePixels = true;
             SubtitlesView.IsHitTestVisible = false;
             SubtitlesView.Focusable = false;
-            SubtitlesView.HorizontalAlignment = HorizontalAlignment.Left;
-            SubtitlesView.VerticalAlignment = VerticalAlignment.Top;
+            SubtitlesView.HorizontalAlignment = HorizontalAlignment.Center;
+            SubtitlesView.VerticalAlignment = VerticalAlignment.Bottom;
 
             // Add the subtitles control and bind the attached properties
             Subtitles.SetForeground(this, SubtitlesView.TextForeground);
             BindProperty(this, Subtitles.ForegroundProperty, SubtitlesView, nameof(SubtitlesView.TextForeground), BindingMode.TwoWay);
+            BindProperty(this, Subtitles.MarginProperty, SubtitlesView, nameof(SubtitlesView.Margin), BindingMode.TwoWay);
             BindProperty(this, Subtitles.OutlineBrushProperty, SubtitlesView, nameof(SubtitlesView.TextOutline), BindingMode.TwoWay);
             BindProperty(this, Subtitles.OutlineWidthProperty, SubtitlesView, nameof(SubtitlesView.TextOutlineWidth), BindingMode.TwoWay);
             BindProperty(this, Subtitles.EffectProperty, SubtitlesView, nameof(SubtitlesView.TextForegroundEffect), BindingMode.TwoWay);
@@ -325,8 +327,8 @@ namespace Unosquare.FFME
             // Compose the control by adding overlapping children
             ContentGrid.Children.Add(VideoView);
             ContentGrid.Children.Add(SubtitlesView);
-            ContentGrid.Children.Add(CaptionsView);
 
+            // ContentGrid.Children.Add(CaptionsView);
             UpdateDesignView();
 
             // Display the control (or not)
@@ -437,16 +439,11 @@ namespace Unosquare.FFME
                     Math.Floor(videoPosition.Y + ((videoSize.Height - CaptionsView.RenderSize.Height) / 2d)),
                     0,
                     0);
-                CaptionsView.Visibility = Visibility.Visible;
+                CaptionsView.Visibility = Visibility.Collapsed;
 
                 // Position and Size the Subtitles View
                 SubtitlesView.Width = Math.Floor(videoSize.Width * 0.9d);
-                SubtitlesView.Height = Math.Floor(videoSize.Height / 8d);
-                SubtitlesView.Margin = new Thickness(
-                    Math.Floor(videoPosition.X + ((videoSize.Width - SubtitlesView.RenderSize.Width) / 2d)),
-                    Math.Floor(videoPosition.Y + videoSize.Height - (1.8 * SubtitlesView.RenderSize.Height)),
-                    0,
-                    0);
+                SubtitlesView.Height = Math.Floor(videoSize.Height / 4d);
 
                 SubtitlesView.Visibility = Visibility.Visible;
             }
