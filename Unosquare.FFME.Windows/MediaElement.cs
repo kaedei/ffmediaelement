@@ -300,6 +300,7 @@ namespace Unosquare.FFME
             SubtitlesView.FontStretch = FontStretches.Condensed;
             SubtitlesView.FontWeight = FontWeights.Bold;
             SubtitlesView.TextOutlineWidth = new Thickness(2);
+            SubtitlesView.TextOutline = Brushes.Black;
             SubtitlesView.TextForeground = Brushes.White;
             SubtitlesView.UseLayoutRounding = true;
             SubtitlesView.SnapsToDevicePixels = true;
