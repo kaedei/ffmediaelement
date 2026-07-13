@@ -152,6 +152,7 @@
         private bool SeekMedia(SeekOperation seekOperation, CancellationToken ct)
         {
             // TODO: Handle Cancellation token ct
+            // var result = false;
             var hasDecoderSeeked = false;
             var startTime = DateTime.UtcNow;
             var targetSeekMode = seekOperation.Mode;
@@ -195,6 +196,8 @@
                 // Signal the starting state clearing the packet buffer cache
                 // TODO: this may not be necessary because the container does this for us.
                 // explore the possibility of removing this line
+                // Line removed as signalled by commit:
+                // https://github.com/zgabi/ffmediaelement/commit/8f5de91907082ba99ae85b9537bb94a292024c28
                 // MediaCore.Container.Components.ClearQueuedPackets(flushBuffers: true);
 
                 // Capture seek target adjustment
@@ -243,10 +246,11 @@
                     }
 
                     // Align to the exact requested position on the main component
-                    while (MediaCore.ShouldReadMorePackets && ct.IsCancellationRequested == false && hasSeekBlocks == false)
+                    while (MediaCore.ShouldReadMorePackets && !ct.IsCancellationRequested && !hasSeekBlocks)
                     {
                         // Check if we are already in range
                         hasSeekBlocks = TrySignalBlocksAvailable(targetSeekMode, mainBlocks, targetPosition, hasSeekBlocks);
+                        if (hasSeekBlocks) break;
 
                         // Read the next packet
                         var packetType = MediaCore.Container.Read();
@@ -264,7 +268,7 @@
 
                 // Find out what the final, best-effort position was
                 TimeSpan resultPosition;
-                if (!mainBlocks.IsInRange(targetPosition))
+                if (mainBlocks.IsInRange(targetPosition) == false)
                 {
                     // We don't have a a valid main range
                     var minStartTimeTicks = mainBlocks.RangeStartTime.Ticks;
@@ -284,7 +288,7 @@
                 }
 
                 // Write a new Real-time clock position now.
-                if (!hasSeekBlocks)
+                if (hasSeekBlocks == false)
                     MediaCore.ChangePlaybackPosition(resultPosition);
             }
             catch (Exception ex)
@@ -337,7 +341,7 @@
         /// <seealso cref="IDisposable" />
         private sealed class SeekOperation : IDisposable
         {
-            private readonly object SyncLock = new object();
+            private readonly object SyncLock = new();
             private bool IsDisposed;
 
             /// <summary>

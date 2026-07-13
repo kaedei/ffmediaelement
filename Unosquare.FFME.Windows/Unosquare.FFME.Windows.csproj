@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" ToolsVersion="Current">
 
-  <!--<Choose>
+  <Choose>
     <When Condition="'$(Configuration)' == 'debug'">
       <PropertyGroup>
-        <TargetFrameworks>net6.0-windows</TargetFrameworks>
+        <TargetFrameworks>net8.0-windows</TargetFrameworks>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <TargetFrameworks>net6.0-windows;net461;net48</TargetFrameworks>
+        <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
       </PropertyGroup>
     </Otherwise>
-  </Choose>-->
+  </Choose>
 
   <PropertyGroup>
     <UseWPF>true</UseWPF>
@@ -29,18 +29,18 @@
     <NeutralLanguage>en</NeutralLanguage>
 
     <!-- Assembly Version Information -->
-    <AssemblyVersion>6.0.2.0</AssemblyVersion>
-    <FileVersion>6.0.2.0</FileVersion>
+    <AssemblyVersion>7.0.361.1</AssemblyVersion>
+    <FileVersion>7.0.361.1</FileVersion>
 
     <!-- NuGet Package Properties -->
     <!-- https://docs.microsoft.com/en-us/nuget/reference/msbuild-targets#pack-target -->
-    <PackageId>zgabi.FFME.Windows</PackageId>
-    <PackageVersion>6.0.2</PackageVersion>
-    <Version>6.0.2</Version>
+    <PackageId>FFME.Windows</PackageId>
+    <PackageVersion>7.0.361-beta.1</PackageVersion>
+    <Version>7.0.361-beta.1</Version>
     <Authors>Mario Di Vece, and Contributors to the FFME project</Authors>
     <Title>FFME: The Adavanced WPF MediaElement Alternative</Title>
     <Description>FFME is an advanced WPF MediaElement alternative. While the standard MediaElement uses DirectX (DirectShow) for media playback, FFME uses FFmpeg to read and decode audio and video.</Description>
-    <Copyright>Unosquare SA de CV, Mario Di Vece, and Contributors, (C) 2015-2020</Copyright>
+    <Copyright>Unosquare SA de CV, Mario Di Vece, and Contributors, (C) 2015-2024</Copyright>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/unosquare/ffmediaelement</PackageProjectUrl>
@@ -53,7 +53,7 @@
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/unosquare/ffmediaelement</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <TargetFrameworks>net6.0-windows;net461;net48</TargetFrameworks>
+
   </PropertyGroup>
 
   <ItemGroup>
@@ -78,8 +78,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FFmpeg.AutoGen" Version="6.0.0.2" />
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
+    <PackageReference Include="FFmpeg.AutoGen" Version="8.0.0.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -89,7 +89,7 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' != 'netcoreapp3.0' AND '$(TargetFramework)' != 'netcoreapp3.1' AND '$(TargetFramework)' != 'net5.0-windows'">
+  <ItemGroup Condition="'$(TargetFramework)' != 'netcoreapp3.0' AND '$(TargetFramework)' != 'netcoreapp3.1' AND '$(TargetFramework)' != 'net8.0-windows'">
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

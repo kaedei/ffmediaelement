@@ -4,12 +4,12 @@
   <Choose>
     <When Condition="'$(Configuration)' == 'debug'">
       <PropertyGroup>
-        <TargetFrameworks>net5.0-windows</TargetFrameworks>
+        <TargetFrameworks>net8.0-windows</TargetFrameworks>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <TargetFrameworks>net5.0-windows;net461;net48</TargetFrameworks>
+        <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -31,19 +31,18 @@
     <RepositoryType>GitHub</RepositoryType>
     <RepositoryUrl>https://github.com/unosquare/ffmediaelement</RepositoryUrl>
 
-    <Version>6.0.2</Version>
-    <AssemblyVersion>6.0.2.0</AssemblyVersion>
-    <FileVersion>6.0.2.0</FileVersion>
+    <Version>7.0.361-beta.1</Version>
+    <AssemblyVersion>7.0.361.1</AssemblyVersion>
+    <FileVersion>7.0.361.1</FileVersion>
     <LangVersion>preview</LangVersion>
 
     <Authors>Mario Di Vece, and Contributors to the FFME project</Authors>
     <Company>Unosquare SA de CV</Company>
     <Product>Unosquare FFME Reference Media Player</Product>
     <Description>Reference implementation of a media player using the FFME</Description>
-    <Copyright>Unosquare SA de CV, Mario Di Vece, and Contributors, (C) 2015-2020</Copyright>
+    <Copyright>Unosquare SA de CV, Mario Di Vece, and Contributors, (C) 2015-2024</Copyright>
     <PackageProjectUrl>https://github.com/unosquare/ffmediaelement</PackageProjectUrl>
     <ApplicationIcon>ffmpeg.ico</ApplicationIcon>
-    <TargetFrameworks>net6.0-windows</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
@@ -73,8 +72,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FFmpeg.AutoGen" Version="6.0.0.2" />
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
+    <PackageReference Include="FFmpeg.AutoGen" Version="8.0.0.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

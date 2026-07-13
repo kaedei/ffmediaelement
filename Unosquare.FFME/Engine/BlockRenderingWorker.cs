@@ -134,17 +134,13 @@ namespace Unosquare.FFME.Engine
                 AlignClocksToPlayback(main, all, ct);
 
                 // Check for and enter a sync-buffering scenario
-                EnterSyncBuffering(main, all, ct);
+                EnterSyncBuffering(main, all);
 
                 // Render each of the Media Types if it is time to do so.
                 if (MediaOptions.UseParallelRendering)
-                {
                     ParallelRenderBlocks.Invoke(all);
-                }
                 else
-                {
                     SerialRenderBlocks.Invoke(all);
-                }
             }
             catch (Exception ex)
             {
@@ -186,10 +182,10 @@ namespace Unosquare.FFME.Engine
         /// </summary>
         private void RunQuantumThread(object state)
         {
-            using var vsync = new VerticalSyncContext();
-            while (WorkerState != WorkerState.Stopped)
+            try
             {
-                try
+                using var vsync = new VerticalSyncContext();
+                while (WorkerState != WorkerState.Stopped)
                 {
                     if (!VerticalSyncContext.IsAvailable)
                         State.VerticalSyncEnabled = false;
@@ -223,10 +219,10 @@ namespace Unosquare.FFME.Engine
 
                     ExecuteCyle();
                 }
-                catch (ObjectDisposedException)
-                {
-                    /* Worker has been disposed */
-                }
+            }
+            catch (ObjectDisposedException)
+            {
+                /* Worker has been disposed */
             }
         }
 
@@ -256,7 +252,7 @@ namespace Unosquare.FFME.Engine
         /// </summary>
         /// <param name="main">The main renderer component.</param>
         /// <param name="all">All the renderer components.</param>
-        /// <param name="ct">Cancellation token.</param>
+        /// <param name="ct">The cancellation token.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void AlignClocksToPlayback(MediaType main, MediaType[] all, CancellationToken ct = default)
         {
@@ -432,9 +428,8 @@ namespace Unosquare.FFME.Engine
         /// </summary>
         /// <param name="main">The main renderer component.</param>
         /// <param name="all">All the renderer components.</param>
-        /// <param name="ct">Cancellation token.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void EnterSyncBuffering(MediaType main, MediaType[] all, CancellationToken ct = default)
+        private void EnterSyncBuffering(MediaType main, MediaType[] all)
         {
             // Determine if Sync-buffering can be potentially entered.
             // Entering the sync-buffering state pauses the RTC and forces the decoder make
@@ -447,9 +442,6 @@ namespace Unosquare.FFME.Engine
 
             foreach (var t in all)
             {
-                if (ct.IsCancellationRequested)
-                    return;
-
                 if (t == MediaType.Subtitle || t == main)
                     continue;
 
@@ -526,7 +518,7 @@ namespace Unosquare.FFME.Engine
                 // Exit sync-buffering state if we can or we must
                 if (mustExitSyncBuffering || canExitSyncBuffering)
                 {
-                    AlignClocksToPlayback(main, all);
+                    AlignClocksToPlayback(main, all, ct);
                     MediaCore.SignalSyncBufferingExited();
                 }
             }
@@ -715,8 +707,8 @@ namespace Unosquare.FFME.Engine
 
             var t = incomingBlock.MediaType;
             var isAttachedPicture = t == MediaType.Video && Container.Components[t].IsStillPictures;
-            var currentBlockStartTime = MediaCore.CurrentRenderStartTime.ContainsKey(t)
-                ? MediaCore.CurrentRenderStartTime[t]
+            var currentBlockStartTime = MediaCore.CurrentRenderStartTime.TryGetValue(t, out TimeSpan value)
+                ? value
                 : TimeSpan.MinValue;
 
             var isRepeatedBlock = currentBlockStartTime != TimeSpan.MinValue && currentBlockStartTime == incomingBlock.StartTime;

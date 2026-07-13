@@ -14,7 +14,7 @@
         /// <summary>
         /// The standard output audio spec.
         /// </summary>
-        public static readonly FFAudioParams Output = new FFAudioParams
+        public static readonly FFAudioParams Output = new()
         {
             ChannelCount = Constants.AudioChannelCount,
             SampleRate = Constants.AudioSampleRate,
@@ -30,9 +30,9 @@
         /// </summary>
         static FFAudioParams()
         {
-            AVChannelLayout channelLayout = default;
-            ffmpeg.av_channel_layout_default(&channelLayout, Output.ChannelCount);
-            Output.ChannelLayout = channelLayout;
+            var emptyChannelLayout = default(AVChannelLayout);
+            ffmpeg.av_channel_layout_default(&emptyChannelLayout, Output.ChannelCount);
+            Output.ChannelLayout = emptyChannelLayout;
             Output.SamplesPerChannel = Output.SampleRate;
             Output.BufferLength = ffmpeg.av_samples_get_buffer_size(
                 null, Output.ChannelCount, Output.SamplesPerChannel + Constants.AudioBufferPadding, Output.Format, 1);
@@ -107,11 +107,11 @@
         internal static FFAudioParams CreateSource(AVFrame* frame)
         {
             var spec = new FFAudioParams(frame);
-            if (spec.ChannelLayout.u.mask == 0)
+            if (spec.ChannelLayout.nb_channels <= 0)
             {
-                AVChannelLayout channelLayout = default;
-                ffmpeg.av_channel_layout_default(&channelLayout, spec.ChannelCount);
-                spec.ChannelLayout = channelLayout;
+                var emptyLayout = default(AVChannelLayout);
+                ffmpeg.av_channel_layout_default(&emptyLayout, spec.ChannelCount);
+                spec.ChannelLayout = emptyLayout;
             }
 
             return spec;

@@ -25,8 +25,7 @@
         protected MediaFrame(AVFrame* pointer, MediaComponent component, MediaType mediaType)
             : this((void*)pointer, component, mediaType)
         {
-            var packetSize = pointer->pkt_size;
-            CompressedSize = packetSize > 0 ? packetSize : 0;
+            CompressedSize = (int)pointer->opaque;
             PresentationTime = pointer->pts;
             DecodingTime = pointer->pkt_dts;
         }
@@ -134,7 +133,9 @@
         /// <inheritdoc />
         public int CompareTo(MediaFrame other)
         {
-            if (other == null) throw new ArgumentNullException(nameof(other));
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
             return StartTime.Ticks.CompareTo(other.StartTime.Ticks);
         }
 
