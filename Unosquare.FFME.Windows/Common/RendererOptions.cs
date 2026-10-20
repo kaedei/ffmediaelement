@@ -41,5 +41,12 @@
         /// faster, lower CPU usage. InteropBitmap might introduce some tearing.
         /// </summary>
         public VideoRendererImageType VideoImageType { get; set; } = VideoRendererImageType.WriteableBitmap;
+
+        /// <summary>
+        /// Gets or sets the GPU frame processor used when <see cref="VideoImageType"/> is
+        /// <see cref="VideoRendererImageType.Direct3D"/>. Must be assigned before opening media.
+        /// Disposed by the video renderer when the media closes.
+        /// </summary>
+        public IDirect3DVideoProcessor Direct3DProcessor { get; set; }
     }
 }

@@ -19,6 +19,7 @@
                     {
                         VideoRendererImageType.WriteableBitmap => new VideoRenderer(mediaCore),
                         VideoRendererImageType.InteropBitmap => new InteropVideoRenderer(mediaCore),
+                        VideoRendererImageType.Direct3D => new Direct3DVideoRenderer(mediaCore),
                         _ => new VideoRenderer(mediaCore),
                     };
                 case MediaType.Subtitle:

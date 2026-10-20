@@ -13,6 +13,13 @@
         /// <summary>
         /// Uses the faster, non tear-free InteropBitmap.
         /// </summary>
-        InteropBitmap
+        InteropBitmap,
+
+        /// <summary>
+        /// Uses an <see cref="IDirect3DVideoProcessor"/> supplied by the host application to process
+        /// frames on the GPU and present them through a D3DImage. Requires
+        /// <see cref="RendererOptions.Direct3DProcessor"/> to be set before opening media.
+        /// </summary>
+        Direct3D
     }
 }
